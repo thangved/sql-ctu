@@ -572,3 +572,84 @@ where a.sttct = b.sttct
 group by a.sttct, a.tenct
 having count(b.mscn) > 2
 order by a.sttct;
+
+-- 5.1 -------------------------------------------------------------------------
+
+select a.mscn, a.hotencn, c.tenct
+from congnhan a left outer join thamgia b on a.mscn = b.mscn
+    left outer join congtrinh c on b.sttct = c.sttct;
+
+-- 5.2 -------------------------------------------------------------------------
+
+select a.mscn, a.hotencn
+from congnhan a left outer join thamgia b on a.mscn = b.mscn
+where b.sttct is null;
+
+-- 5.3 -------------------------------------------------------------------------
+
+select a.sttct, a.tenct, count(b.mscn) socn
+from congtrinh a left outer join thamgia b on a.sttct = b.sttct
+group by a.sttct, a.tenct;
+
+-- 5.4 -------------------------------------------------------------------------
+
+select a.mscn, a.hotencn, count(b.sttct) soct
+from congnhan a left outer join thamgia b on a.mscn = b.mscn
+group by a.mscn, a.hotencn;
+
+-- 5.5 -------------------------------------------------------------------------
+
+select a.mskts, a.hotenkts, a.noitn
+from kientrucsu a left outer join thietke b on a.mskts = b.mskts
+where b.sttct is null;
+
+-- 5.6 -------------------------------------------------------------------------
+
+select a.sttct, a.tenct
+from congtrinh a left outer join thietke b on a.sttct = b.sttct
+where b.mskts is null
+    and a.kinhphi > 3500;
+
+-- 5.7 -------------------------------------------------------------------------
+
+select a.msch, a.tenchu, b.tenct
+from chunhan a, congtrinh b left outer join thamgia c on b.sttct = c.sttct
+where a.msch = b.msch
+    and c.mscn is null;
+
+-- 5.8--------------------------------------------------------------------------
+
+select a.mscn, a.hotencn
+from congnhan a left outer join thamgia b on a.mscn = b.mscn
+where b.sttct is null;
+
+-- 5.9 -------------------------------------------------------------------------
+
+select distinct a.msct, a.tenthau
+from chuthau a, congtrinh b
+where a.msct = b.msct
+    and (
+        select count(d.sttct)
+        from chuthau c, congtrinh d
+        where c.msct = d.msct
+            and d.tinhthanh <> 'TPCT'
+            and c.msct = a.msct
+    ) = 0
+    and b.tinhthanh = 'TPCT';
+
+-- 5.10 ------------------------------------------------------------------------
+
+select a.msch, a.tenchu
+from chunhan a, congtrinh b left outer join thamgia c on b.sttct = c.sttct
+    left outer join congnhan d on c.mscn = d.mscn
+where a.msch = b.msch
+    and a.tenchu like 'Nguyen %'
+    and a.diachichu like '% Hai Ba Trung'
+group by a.msch, a.tenchu
+having sum(
+    case
+        when d.phai = 'Nu' then 1
+        else 0
+    end
+) = 0;
+
