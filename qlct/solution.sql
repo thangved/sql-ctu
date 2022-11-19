@@ -621,7 +621,12 @@ where a.msch = b.msch
 
 select a.mscn, a.hotencn
 from congnhan a left outer join thamgia b on a.mscn = b.mscn
-where b.sttct is null;
+where b.sttct is null
+    and a.ngaysinh = (
+        select max(c.ngaysinh)
+        from congnhan c left outer join thamgia d on c.mscn = d.mscn
+        where d.sttct is null
+    );
 
 -- 5.9 -------------------------------------------------------------------------
 
